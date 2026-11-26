@@ -1,0 +1,28 @@
+# WORKFLOW 08 - Python linting and format check (beginner)
+# Purpose: catch style problems and bugs before merging.
+
+name: 08 Python Lint
+
+on:
+  pull_request:                  # Check code quality on every PR
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4        # Get the code
+
+      - uses: actions/setup-python@v5    # Install Python
+        with:
+          python-version: "3.12"
+
+      - name: Install lint tools
+        run: pip install flake8 black    # flake8 = linter, black = formatter
+
+      - name: Run flake8 (find errors and style issues)
+        # --max-line-length: allow longer lines (black uses 88)
+        # --extend-ignore=E203: avoid a known black/flake8 conflict
+        run: flake8 . --max-line-length=100 --extend-ignore=E203
+
+      - name: Check formatting with black
+        run: black --check .             # --check fails if files need formatting
